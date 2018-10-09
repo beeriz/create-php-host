@@ -100,7 +100,7 @@ pm.max_spare_servers = @@MAX_SERVERS@@
 ; This can be useful to work around memory leaks in 3rd party libraries. For
 ; endless request processing specify '0'. Equivalent to PHP_FCGI_MAX_REQUESTS.
 ; Default Value: 0
-pm.max_requests = 500
+pm.max_requests = 300
 
 ; The URI to view the FPM status page. If this value is not set, no URI will be
 ; recognized as a status page. By default, the status page shows the following
@@ -218,7 +218,7 @@ pm.max_requests = 500
 ; does not stop script execution for some reason. A value of '0' means 'off'.
 ; Available units: s(econds)(default), m(inutes), h(ours), or d(ays)
 ; Default Value: 0
-request_terminate_timeout = 30s
+request_terminate_timeout = 300
 
 ; The timeout for serving a single request after which a PHP backtrace will be
 ; dumped to the 'slowlog' file. A value of '0s' means 'off'.
@@ -230,6 +230,7 @@ request_terminate_timeout = 30s
 ; Default Value: not set
 ; Note: slowlog is mandatory if request_slowlog_timeout is set
 ;slowlog = log/$pool.log.slow
+slowlog = /var/log/php-fpm-slowlog-$pool.log
 
 ; Set open file descriptor rlimit.
 ; Default Value: system defined value
