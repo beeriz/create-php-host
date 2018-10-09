@@ -21,24 +21,6 @@ port_in_redirect off;
        return 405;
 }
     
-    #set $skip_cache 0;
-    # POST requests and urls with a query string should always go to PHP
-    #if ($request_method = POST) {
-    #    set $skip_cache 1;
-    #}
-    #if ($query_string != "") {
-    #    set $skip_cache 1;
-    #}
-
-    # Don't cache uris containing the following segments
-    #if ($request_uri ~* "/wp-admin/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml") {
-     #   set $skip_cache 1;
-    #}
-
-    # Don't use the cache for logged in users or recent commenters
-    #if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in") {
-    #    set $skip_cache 1;
-    #}
 
     location ~ \.php$ {
         # SECURITY : Zero day Exploit Protection
@@ -52,15 +34,7 @@ port_in_redirect off;
         include fastcgi_params;
         fastcgi_param HTTPS on;
         fastcgi_read_timeout 300;
-        
-        #Cache
-        #fastcgi_cache_bypass $skip_cache;
-        #fastcgi_no_cache $skip_cache;
-        #fastcgi_cache anescache;
-        #fastcgi_cache_valid 200 5m;
-        #fastcgi_cache_methods GET HEAD;
-        #fastcgi_cache_use_stale updating error timeout invalid_header http_500;
-        #fastcgi_cache_key "$scheme$request_method$host$request_uri$mobile_request";
+
         
         fastcgi_pass_header Set-Cookie;
         fastcgi_pass_header Cookie;
@@ -71,21 +45,15 @@ port_in_redirect off;
         add_header X-Frame-Options SAMEORIGIN; 
         add_header X-Content-Type-Options nosniff; 
         add_header X-XSS-Protection "1; mode=block"; 
-        if ($http_origin ~* (https?://aneslix\.com(:[0-9]+)?$)) {
-        add_header 'Access-Control-Allow-Origin' "$http_origin";
-    }
-       #add_header Content-Security-Policy "script-src 'self' data: 'unsafe-inline' 'unsafe-eval' https://cdn.ywxi.net https://www.mcafeesecure.com; style-src 'self' data: 'unsafe-inline' https://aneslix-njgeionkq23.netdna-ssl.com; font-src 'self' data: https://aneslix-njgeionkq23.netdna-ssl.com";
+         
+      
     }
     
-
     include global/common.conf;
     include global/wordpress.conf;
     include global/httaccess.conf;
     include bots.d/blockbots.conf;
     include bots.d/ddos.conf;
- 
-    include /home/main/aneslix.com/main/hidemywp.conf; 
-    include snippets/ssl-aneslix.com.conf;
-    include snippets/ssl-params.conf;
- 
+
+  
 }
