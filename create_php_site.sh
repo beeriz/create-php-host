@@ -97,6 +97,10 @@ chown $USERNAME:$USERNAME /home/main/$HOME_DIR/ -R
 # Install certbot
 sudo certbot --authenticator standalone --installer nginx -d $DOMAIN --pre-hook "/etc/init.d/nginx stop" --post-hook "/etc/init.d/nginx start"
 
+$NGINX_INIT reload
+$PHP_FPM_INIT restart
+
+# NEED AUTOMATATION 
 # Creat DB user and password
 
 mysql -u root -p
@@ -116,7 +120,6 @@ sudo crontab -e
 00 2 15 * * /usr/bin/certbot renew -q
 
 
-$NGINX_INIT reload
-$PHP_FPM_INIT restart
+
 
 echo -e "\nSite Created for $DOMAIN with PHP support"
