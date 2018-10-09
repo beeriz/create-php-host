@@ -1,7 +1,4 @@
 #!/bin/bash
-# @author: Daniel Hand
-# http://www.designsbytouch.co.uk
-# Created:   04/07/16
 
 
 # Modify the following to match your system
@@ -36,13 +33,6 @@ echo "Please specify the username for this site?"
 read USERNAME
 HOME_DIR=$USERNAME
 adduser $USERNAME
-# -------
-# CentOS:
-# If you're using CentOS you will need to uncomment the next 3 lines!
-# -------
-#echo "Please enter a password for the user: $USERNAME"
-#read -s PASS
-#echo $PASS | passwd --stdin $USERNAME
 
 echo "Would you like to change to web root directory (y/n)?"
 read CHANGEROOT
@@ -95,9 +85,36 @@ chmod 750 /home/main/$HOME_DIR -R
 chmod 700 /home/main/$HOME_DIR/_sessions
 chmod 770 /home/main/$HOME_DIR/_logs
 chmod 750 /home/main/$HOME_DIR$PUBLIC_HTML_DIR
-wget https://fr.wordpress.org/wordpress-4.9.5-fr_FR.zip -O /home/main/$HOME_DIR/wordpress-4.9.5-fr_FR.zip 
-unzip /home/main/$HOME_DIR/wordpress-4.9.5-fr_FR.zip -d /home/main/$HOME_DIR/public_html/
+
+# Install latest version Wordpress
+cd /home/main/$HOME_DIR$PUBLIC_HTML_DIR
+wget "https://wordpress.org/latest.zip";
+unzip latest.zip
+mv -a /home/main/$HOME_DIR$PUBLIC_HTML_DIR/wordpress/* /home/main/$HOME_DIR$PUBLIC_HTML_DIR/
+
 chown $USERNAME:$USERNAME /home/main/$HOME_DIR/ -R
+
+# Install certbot
+sudo certbot --authenticator standalone --installer nginx -d $DOMAIN --pre-hook "/etc/init.d/nginx stop" --post-hook "/etc/init.d/nginx start"
+
+# Creat DB user and password
+
+mysql -u root -p
+
+CREATE USER '$USERNAME'@'localhost' IDENTIFIED BY 'password';
+
+CREATE DATABASE DB_$USERNAME;
+
+GRANT ALL PRIVILEGES ON DB_$USERNAME. * TO '$USERNAME'@'localhost' IDENTIFIED BY 'password';
+
+FLUSH PRIVILEGES;
+exit
+
+# Crontab Certbot renew
+sudo crontab -e
+00 2 1 * * /usr/bin/certbot renew -q
+00 2 15 * * /usr/bin/certbot renew -q
+
 
 $NGINX_INIT reload
 $PHP_FPM_INIT restart
