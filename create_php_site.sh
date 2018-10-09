@@ -100,6 +100,11 @@ sudo certbot --authenticator standalone --installer nginx -d $DOMAIN --pre-hook 
 $NGINX_INIT reload
 $PHP_FPM_INIT restart
 
+
+echo -e "\nSite Created for $DOMAIN with PHP support"
+
+
+
 # NEED AUTOMATATION 
 # Creat DB user and password
 
@@ -122,4 +127,3 @@ sudo crontab -e
 
 
 
-echo -e "\nSite Created for $DOMAIN with PHP support"
